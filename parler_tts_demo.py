@@ -2,6 +2,7 @@ import torch
 from parler_tts import ParlerTTSForConditionalGeneration
 from transformers import AutoTokenizer
 import soundfile as sf
+from tqdm import tqdm
 
 # Gerät auswählen (GPU oder CPU)
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -18,11 +19,13 @@ description = "A female speaker delivers a slightly expressive and animated spee
 input_ids = tokenizer(description, return_tensors="pt").input_ids.to(device)
 prompt_input_ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
 
-# Audio generieren
-generation = model.generate(input_ids=input_ids, prompt_input_ids=prompt_input_ids)
+# Fortschrittsanzeige und Generierung des Audios
+with tqdm(total=1, desc="Generating Audio") as pbar:
+    outputs = model.generate(input_ids, prompt_input_ids, num_beams=4, no_repeat_ngram_size=2, early_stopping=True)
+    pbar.update(1)
 
-# Audio in eine Datei schreiben
-audio_arr = generation.cpu().numpy().squeeze()
-sf.write("parler_tts_out.wav", audio_arr, model.config.sampling_rate)
+# Audio speichern
+audio = outputs[0].cpu().numpy()
+sf.write("output.wav", audio, 22050)
 
-print("Audio erfolgreich generiert: parler_tts_out.wav")
+print("Audio erfolgreich generiert: output.wav")
