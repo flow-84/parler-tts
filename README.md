@@ -30,8 +30,10 @@ This repository contains the inference and training code for Parler-TTS. It is d
 Parler-TTS has light-weight dependencies and can be installed in one line:
 
 ```sh
-pip install git+https://github.com/huggingface/parler-tts.git
+- pip install git+https://github.com/huggingface/parler-tts.git
 ```
+- python3 setup.py install
+- 
 
 Apple Silicon users will need to run a follow-up command to make use the nightly PyTorch (2.4) build for bfloat16 support:
 
